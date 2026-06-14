@@ -153,28 +153,49 @@ static void batchSwizzlingOnClass(Class cls, NSArray<NSString*>*origSelectors, I
             [copyButton setShowsMenuAsPrimaryAction:true];
             
             [copyButton setMenu:[UIMenu menuWithTitle:@"" children:@[
-                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_1"] image:[UIImage systemImageNamed:@"doc.on.clipboard"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_1"] image:[UIImage systemImageNamed:@"text.alignleft"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 if (self.viewModel.bio != nil)
                     UIPasteboard.generalPasteboard.string = self.viewModel.bio;
             }],
-                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_2"] image:[UIImage systemImageNamed:@"doc.on.clipboard"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_2"] image:[UIImage systemImageNamed:@"at"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 if (self.viewModel.username != nil)
                     UIPasteboard.generalPasteboard.string = self.viewModel.username;
             }],
-                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_3"] image:[UIImage systemImageNamed:@"doc.on.clipboard"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_3"] image:[UIImage systemImageNamed:@"person"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 if (self.viewModel.fullName != nil)
                     UIPasteboard.generalPasteboard.string = self.viewModel.fullName;
             }],
-                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_4"] image:[UIImage systemImageNamed:@"doc.on.clipboard"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_4"] image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 if (self.viewModel.url != nil)
                     UIPasteboard.generalPasteboard.string = self.viewModel.url;
-            }],
-                [UIAction actionWithTitle:[[BHTBundle sharedBundle] localizedStringForKey:@"COPY_PROFILE_INFO_MENU_OPTION_5"] image:[UIImage systemImageNamed:@"doc.on.clipboard"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                if (self.viewModel.location != nil)
-                    UIPasteboard.generalPasteboard.string = self.viewModel.location;
-            }],
-            ]]];
-            
+            }]]];
+        }
+        [innerContentView addSubview:copyButton];
+    }
+}
+%end
+
+// ==========================================
+//      BHTWITTER: RENOWNED EDITION ADDONS
+// ==========================================
+
+// FEATURE 1: Force System Feeds to High-Quality Video Playback
+%hook T1TwitterVideoPlayerView
+- (BOOL)shouldForceHighQualityVideo { 
+    return YES; 
+}
+%end
+
+// FEATURE 2: Long-Press Media In-App Clipboard Downloader
+%hook T1TweetMediaVideoView
+- (void)handleLongPress {
+    NSURL *rawUrl = [self valueForKey:@"_videoURL"];
+    if (rawUrl) { 
+        [UIPasteboard generalPasteboard].URL = rawUrl; 
+    }
+}
+%end
+
         } else {
             [copyButton addTarget:self action:@selector(copyButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
         }
