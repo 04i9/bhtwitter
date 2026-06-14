@@ -3,6 +3,8 @@
 LONG=sideloaded:,rootless:,trollstore
 OPTS=$(getopt -a weather --longoptions "$LONG" -- "$@")
 
+mkdir -p ./packages
+
 while :; do
   case "$1" in
     --sideloaded)
@@ -10,7 +12,8 @@ while :; do
 
       make clean
       rm -rf .theos
-      make SIDELOADED=1
+      make SIDELOADED=1 -j$(sysctl -n hw.logicalcpu)
+17
 
       if [ $? -eq 0 ]; then
         echo -e '\033[1m\033[32mMake command succeeded.\033[0m'
@@ -21,12 +24,13 @@ while :; do
 
       if [ -e ./packages/com.atebits.Tweetie2.ipa ]; then
         echo -e '\033[1m\033[32mBuilding the IPA.\033[0m'
-        cyan -i packages/com.atebits.Tweetie2.ipa -o packages/BHTwitter-sideloaded --ignore-encrypted \
+        cyan -i packages/com.atebits.Tweetie2.ipa -o packages/BHTwitter-sideloaded.ipa --ignore-encrypted \
           -uwf .theos/obj/debug/keychainfix.dylib .theos/obj/debug/BHTwitter.dylib layout/Library/Application\ Support/BHT/BHTwitter.bundle
 
         echo -e '\033[1m\033[32mDone, thanks for using BHTwitter.\033[0m'
       else
         echo -e '\033[1m\033[0;31mpackages/com.atebits.Tweetie2.ipa not found.\033[0m'
+        exit 1
       fi
       break
       ;;
@@ -36,7 +40,7 @@ while :; do
       make clean
       rm -rf .theos
       export THEOS_PACKAGE_SCHEME=rootless
-      make package
+      make package -j$(sysctl -n hw.logicalcpu)
 
       echo -e '\033[1m\033[32mDone, thanks for using BHTwitter.\033[0m'
       break
@@ -46,7 +50,7 @@ while :; do
 
       make clean
       rm -rf .theos
-      make
+      make -j$(sysctl -n hw.logicalcpu)
 
       if [ $? -eq 0 ]; then
         echo -e '\033[1m\033[32mMake command succeeded.\033[0m'
@@ -64,6 +68,7 @@ while :; do
         echo -e '\033[1m\033[32mDone, thanks for using BHTwitter.\033[0m'
       else
         echo -e '\033[1m\033[0;31mpackages/com.atebits.Tweetie2.ipa not found.\033[0m'
+        exit 1
       fi
       break
       ;;
@@ -73,7 +78,7 @@ while :; do
       make clean
       rm -rf .theos
       unset THEOS_PACKAGE_SCHEME
-      make package
+      make package -j$(sysctl -n hw.logicalcpu)
 
       echo -e '\033[1m\033[32mDone, thanks for using BHTwitter.\033[0m'
       break
