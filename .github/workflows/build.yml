@@ -149,7 +149,7 @@ jobs:
           name: BHTwitter_${{ env.BHTWITTER_VERSION }}
           path: ${{ github.workspace }}/main/packages/${{ steps.package_name.outputs.package }}
           if-no-files-found: error
-          compression-level: 0 # 👈 Fixed: Disables compression to handle the 215MB file smoothly
+          compression-level: 0
 
       - name: Create Draft Release
         if: ${{ inputs.create_release }}
